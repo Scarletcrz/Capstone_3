@@ -12,8 +12,7 @@ public class DatabaseConfig
     private BasicDataSource basicDataSource;
 
     @Bean
-    public BasicDataSource dataSource()
-    {
+    public BasicDataSource dataSource(){
         return basicDataSource;
     }
 
