@@ -21,13 +21,13 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao{
 
         String query = "Select * From categories;";
         try(
-                Connection connection = dataSource.getConnection();
+                Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 ResultSet resultSet = preparedStatement.executeQuery();
         ){
             while (resultSet.next()){
 
-                Category category = categoryShaper(resultSet);
+                Category category = mapRow(resultSet);
                 categories.add(category);
             }
         }catch (SQLException e){
@@ -37,11 +37,11 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao{
     }
 
     @Override
-    public Category getById(int categoryId){
+    public Category getById(int categoryId) {
         String query = "Select * From categories Where category_id=?;";
 
         try(
-                Connection connection = dataSource.getConnection();
+                Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
         ){
             preparedStatement.setInt(1, categoryId);
@@ -50,7 +50,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao{
                     ResultSet resultSet = preparedStatement.executeQuery();
             ){
                 if(resultSet.next()){
-                    return categoryShaper(resultSet);
+                    return mapRow(resultSet);
                 }else {
                     System.out.printf("Category Not Found");
                 }
@@ -61,11 +61,11 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao{
     }
 
     @Override
-    public Category create(Category category){
+    public Category create(Category category) {
         String query = "INSERT INTO categories(category_id, name, description) VALUES(?, ?, ?);";
 
         try(
-                Connection connection = dataSource.getConnection();
+                Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query,
                         Statement.RETURN_GENERATED_KEYS);
         ){
@@ -96,7 +96,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao{
         String query = "Update categories Set name=?, description=? Where category_id=?;";
 
         try(
-                Connection connection = dataSource.getConnection();
+                Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
         ){
             preparedStatement.setString(1, category.getName());
@@ -114,7 +114,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao{
         String query = "Delete From categories Where category_id=?;";
 
         try(
-                Connection connection = dataSource.getConnection();
+                Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
         ){
             preparedStatement.setInt(1, categoryId);
@@ -124,8 +124,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao{
         }
     }
 
-    private Category mapRow(ResultSet row) throws SQLException
-    {
+    private Category mapRow(ResultSet row) throws SQLException {
         int categoryId = row.getInt("category_id");
         String name = row.getString("name");
         String description = row.getString("description");
@@ -139,14 +138,15 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao{
 
         return category;
     }
-    public Category categoryShaper(ResultSet resultSet) throws SQLException{
 
-        int categoryId = resultSet.getInt("category_id");
-        String categoryName = resultSet.getString("name");
-        String categoryDesc = resultSet.getString("description");
-
-        Category category = new Category(categoryId, categoryName, categoryDesc);
-        return category;
-    }
+//    public Category categoryShaper(ResultSet resultSet) throws SQLException{
+//
+//        int categoryId = resultSet.getInt("category_id");
+//        String categoryName = resultSet.getString("name");
+//        String categoryDesc = resultSet.getString("description");
+//
+//        Category category = new Category(categoryId, categoryName, categoryDesc);
+//        return category;
+//    }
 
 }
